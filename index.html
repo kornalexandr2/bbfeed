@@ -1,104 +1,116 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="format-detection" content="telephone=no" />
-<meta name="viewport"
-    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-<link rel="stylesheet" type="text/css" href="css/index.css" />
-<link rel="stylesheet" type="text/css"
-    href="jquery.mobile-1.3.1/jquery.mobile-1.3.1.min.css" />
-<script type="text/javascript" src="cordova.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
-<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
-<script type="text/javascript"
-    src="jquery.mobile-1.3.1/jquery.mobile-1.3.1.min.js"></script>
-<title>The Redneck Coder - RSS Feed Reader</title>
+<meta charset="utf-8">
+<title>Battle Brothehoods App</title>
+<link href="jquery-mobile/jquery.mobile.theme-1.3.0.min.css" rel="stylesheet" type="text/css">
+<link href="jquery-mobile/jquery.mobile.structure-1.3.0.min.css" rel="stylesheet" type="text/css">
+<script src="jquery-mobile/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script src="jquery-mobile/jquery.mobile-1.3.0.min.js" type="text/javascript"></script>
+
+<style>
+		.ui-footer .ui-btn-right {
+}
+.articleContent > table > tbody > tr > td > font > br {
+  display: none;
+}
+.articleContent > table > tbody > tr > td > font > br + div {
+  display: none;
+}
+.articleContent * {
+  font-size: medium !important;
+}
+</style>
+
 </head>
+
 <body>
-    <div data-role="page" id="home">
-        <div data-role="content">
-            <h1>Redneck Coder - RSS Feed Reader</h1>
-            <button onclick="loadRss();">Load Rss</button>
-            <br />
-            <ul data-role="listview" data-inset="true" data-filter="true"
-                id="topics">
-            </ul>
-        </div>
-    </div>
-    <div data-role="page" id="blogItemView">
-        <div data-role="header" data-position="fixed">
-            <a href="#" data-role="button" data-icon="back" data-rel="back">Home</a>
-            <h1 id="itemHeader">View Post</h1>
-        </div>
-        <div data-role="content">
-            <h3 id="itemTitle">Title</h3>
-            <div id="itemContent">Content</div>
-        </div>
-    </div>
- 
-    <script type="text/javascript">
-        app.initialize(); // call the initialize function in the index.js file
- 
-        $.mobile.phonegapNavigationEnabled = true; // tell jQuery mobile we are using phonegap
- 
-        var blogTopics;
- 
-        function loadItem(index) {
-            /* get the item from the array that was clicked
-            * and display insert the contents into the appropriate
-            * elements */
-            var clickedItem = blogTopics[index];
-            $("#itemTitle").text(clickedItem.title);
-            $("#itemContent").html(clickedItem.content);
-        }
- 
-        function loadRss() {
-            blogTopics = new Array();
-            $.mobile.loading("show", {
-                text : "Loading...",
-                textVisible : true
-            });
-            $.ajax({
-                url : "https://theredneckcoder.wordpress.com/feed/",
-                dataType : "xml",
-                crossDomain : true
-            }).done(
-                    function(data) {
-                        var $xml = $(data);
-                        var cnt = 0;
-                        $xml.find("item")
-                                .each(
-                                        function(data) {
-                                            var $xmlItem = $(this);
-                                            var item = {
-                                                title : $xmlItem.children(
-                                                        "title").text(),
-                                                link : $xmlItem
-                                                        .children("link")
-                                                        .text(),
-                                                pubDate : $xmlItem.children(
-                                                        "pubDate").text(),
-                                                guid : $xmlItem
-                                                        .children("guid")
-                                                        .text(),
-                                                content : $xmlItem.find(
-                                                        "encoded").text()
-                                            };
-                                            blogTopics.push(item);
-                                            $("#topics").append(
-                                                    '<li><a href="#blogItemView" onclick="loadItem('
-                                                            + cnt++ + ');">'
-                                                            + item.title
-                                                            + '</a></li>');
-                                        });
-                        $("#topics").listview("refresh");
-            }).fail(function(xhr, textStatus, errorThrown) {
-                alert(textStatus.toString());
-            }).always(function() {
-                $.mobile.loading("hide");
-            });
-        }
-    </script>
+
+<script>
+/* configuration */
+var maxLength = 100;
+/* writing HTML */
+document.write(
+  '<div data-role="page" data-theme="b" id="list">' +
+  '  <div data-role="header" data-theme="b" data-position="fixed">' +
+  '    <h1><span id="widgetTitle">...</span> ' +
+  '      <span style="font-size: x-small">-</span></h1>' +
+  '  </div>' +
+  '  <div data-role="content">' +
+  '    <ol data-role="listview" data-theme="a" data-filter="true"  id="articleList">'
+);
+for(var i=1; i<=maxLength; i++){
+  document.write(
+    '<li id="list' + i + '"><a href="#article' + i + '" id="link' + i + '">&nbsp;</a></li>'
+  );
+}
+document.write(
+  '    </ul>' +
+  '  </div>' +
+  '</div>'
+);
+for(i=1; i<=maxLength; i++){
+  document.write(
+    '<div data-role="page"  data-theme="a" id="article' + i + '">' +
+    '  <div data-role="header" data-theme="a" data-position="inline">' +
+    '    <a href="#list" data-role="button" data-theme="a" data-icon="home" data-back="true">Home</a>' +
+    '    <h1 id="articleHeader' + i + '">&nbsp;</h1>' +
+    '    <a href="#" id="openButton' + i + '" data-role="button"  data-theme="a" data-icon="plus"' +
+    '      class="ui-btn-right" rel="external">Open</a>' +
+    '  </div>' +
+    '  <div data-role="content" >' +
+    '    <div id="articleContent' + i + '" class="articleContent"></div>' +
+    '    <div data-role="controlgroup" data-theme="a" data-type="horizontal">' +
+    '      <a href="#article' + String(i-1) + '" data-role="button" data-theme="a" data-icon="arrow-l"' +
+    '        data-inline="true" class="prevButton" data-theme="a" >Prev</a>' +
+    '      <a href="#article' + String(i+1) + '" data-role="button"  data-theme="a" data-icon="arrow-r"' +
+    '        data-inline="true" class="nextButton" data-iconpos="right">Next</a>' +
+    '    </div>' +
+    '  </div>' +
+    '</div>'
+  );
+}
+/* JSONP */
+$(function(){
+  getOnlineFeed('http://battlebrotherhood.ru/feed?redirect=false&start-index=1&max-results=100');
+});
+/* functions */
+var listEntries = function(json) {
+  if (!json.responseData.feed.entries) return false;
+  $('#widgetTitle').text(json.responseData.feed.title);
+  var articleLength =json.responseData.feed.entries.length;
+  articleLength = (articleLength > maxLength) ? maxLength : articleLength;
+  for (var i = 1; i <= articleLength ; i++) {
+    var entry = json.responseData.feed.entries[i-1];
+    $('#link' + i).text(entry.title);
+    $('#articleHeader' + i).text(entry.title);
+    $('#openButton' + i).attr('href', entry.link);
+    $('#articleContent' + i).append(entry.content);
+  }
+  $('#article1 .prevButton').remove();
+  $('#article' + articleLength + ' .nextButton').remove();
+  if (articleLength < maxLength) {
+    for (i = articleLength + 1; i <= maxLength; i++) {
+      $('#list' + i).remove();
+      $('#article' + i).remove();
+    }
+  }
+};
+var getOnlineFeed = function(url) {
+  var script = document.createElement('script');
+  script.setAttribute('src', 'http://ajax.googleapis.com/ajax/services/feed/load?callback=listEntries&hl=ja&output=json-in-script&q='
+                      + encodeURIComponent(url)
+                      + '&v=1.0&num=' + maxLength);
+  script.setAttribute('type', 'text/javascript');
+  document.documentElement.firstChild.appendChild(script);
+};
+var getOfflineFeed = function(url) {
+  var script = document.createElement('script');
+  script.setAttribute('src', url);
+  script.setAttribute('type', 'text/javascript');
+  document.documentElement.firstChild.appendChild(script);
+};</script>
+
+
 </body>
 </html>
